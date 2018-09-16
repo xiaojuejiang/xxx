@@ -1,9 +1,11 @@
 var http=require("http");
 var fs=require("fs");
+var url=require('url');
 var server=http.createServer();
 server.on('request',function(req,res){
-    var url=req.url;
-    if(url==="/"){
+    var parse=url.parse(req.url);
+    var pathname=parse.pathname;
+    if(pathname==="/"){
         fs.readFile("./helloword.html",function(err,data){
             if(err){
                 res.setHeader("content-type","text/plain;charset=utf-8");
@@ -14,7 +16,7 @@ server.on('request',function(req,res){
             }
         })
     }
-    if(url==="/style.css"){
+    if(pathname==="/style.css"){
         fs.readFile("./style.css",function(err,data){
             if(err){
                 res.setHeader("content-type","text/plain;charset=utf-8");

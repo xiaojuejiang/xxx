@@ -22,3 +22,15 @@ template.render("data.tostring()",{
 	files:files,
 	name:'jack'
 })
+
+var b=require('模块')
+导出多个成员
+export.s=123,
+export.a='hello',
+
+b得到一个对象
+导出单个成员
+module.export="hello"
+
+b得到一个字符串
+
