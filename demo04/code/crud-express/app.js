@@ -11,7 +11,7 @@ app.use('/public/',express.static('./public/'));
 
 app.get('/',function(req,res){
 	res.render('index.html',{
-		f
+		fruit:['苹果','梨子',]
 	})
 })
 
