@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .map {
+            position: relative;
+            height: 400px;
+            width: 400px;
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="map" class="map"></div>
+    <script>
+        (function(){
+        var element=[]; 
+        function Food(width,height,color,x,y){
+            this.width=width || 20;
+            this.height=height || 20;
+            this.color=color||"green";
+            this.x=x||0;
+            this.y=y||0;
+        }
+        Food.prototype.init=function(map){
+            if(element[0]){
+                element[0].remove();
+                element=[];
+            }
+
+            var div=document.createElement('div');
+            div.style.height=this.height+'px';
+            div.style.width=this.width+'px';
+            div.style.position="absolute";
+            div.style.backgroundColor=this.color;
+            this.x=Math.floor(Math.random()*(map.offsetWidth/this.width));
+            this.y=Math.floor(Math.random()*(map.offsetHeight/this.height));
+            div.style.left=this.x*this.width+'px';
+            div.style.top=this.y*this.height+'px';
+            map.appendChild(div);
+            element.push(div);
+        }  
+        window.Food=Food;
+        })();
+        (function(){
+            var element=[];
+            function Snack(width,height,color,x,y,dirction){
+                this.width=width ||20;
+                this.height=height||20;
+                this.x=x||0;
+                this.y=y||0;
+                this.dirction=dirction||'right';
+                this.body=[
+                    {x:3,y:1,color:color||'orange'},
+                    {x:2,y:1,color:color||'green'},
+                    {x:1,y:1,color:color||'green'}
+                ];
+                
+            }
+            Snack.prototype.init=function(map){
+                for(var i=0;i<this.body.length;i++){
+                    var div=document.createElement('div');
+                    div.style.height=this.height+'px';
+                    div.style.width=this.width+'px';
+                    div.style.position="absolute";
+                    div.style.backgroundColor=this.body[i].color;
+                    div.style.top=this.body[i].y*this.height+'px';
+                    div.style.left=this.body[i].x*this.width+'px';
+                    map.appendChild(div);
+                    element.push(div);
+                }
+            }
+            Snack.prototype.move=function(map,food){
+                var body=this.body;
+                var len=body.length;
+                for(var i=len-1;i>0;i--){
+                    body[i].x=body[i-1].x;
+                    body[i].y=body[i-1].y;
+                }
+                switch(this.dirction){
+                    case "right": body[0].x+=1;break;
+                    case "left": body[0].x-=1;break;
+                    case "top": body[0].y-=1;break;
+                    case "down": body[0].y+=1;break;
+                }
+                for(var i=element.length-1;i>=0;i--){
+                    // console.dir(element[i]);
+                    element[i].remove();
+                }
+                console.log(body[0].x+"=="+food.x+"--"+body[0].y+"=="+food.y);
+                if(body[0].x==food.x && body[0].y==food.y){
+                    food.init(map);
+                    body.push({
+                        x:body[body.length-1].x,
+                        y:body[body.length-1].y,
+                        color:body[body.length-1].color,
+                    })
+                }
+            }
+            window.Snack=Snack;
+        })();
+        (function(){
+            var that=null;
+            function Game(map) {
+                this.food=new Food();
+                this.snack=new Snack();
+                this.map=map;
+                that=this;
+            }
+            Game.prototype.init=function(){
+                this.food.init(this.map);
+                this.snack.init(this.map);
+                this.runSnack();
+                this.binkkey();
+            }
+            Game.prototype.runSnack=function(){
+                var timeId=setInterval(function(){
+                    this.snack.move(this.map,this.food);
+                    this.snack.init(this.map);
+                    this.xMax=Math.floor(this.map.offsetWidth/this.snack.width);
+                    this.yMax=Math.floor(this.map.offsetHeight/this.snack.height);
+                    var body=this.snack.body[0];
+                    if(body.x<0||body.x>=this.xMax||body.y<0||body.y>=this.yMax){
+                        clearInterval(timeId);
+                        alert('游戏结束');
+                    }
+                }.bind(this),100);
+            }
+            Game.prototype.binkkey=function(){
+                document.onkeydown=function(e){
+                    switch(e.keyCode){
+                        case 37: that.snack.dirction="left";break;
+                        case 38: that.snack.dirction="top";break;
+                        case 39: that.snack.dirction="right";break;
+                        case 40: that.snack.dirction="down";break;
+                    }
+                }
+            }.bind(this);
+            window.Game=Game;
+        })()
+        var map=document.getElementById('map');
+        var game=new Game(map);
+        game.init();
+        
+        
+
+
+
+    </script>
+</body>
+</html>

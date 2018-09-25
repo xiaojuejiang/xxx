@@ -1,4 +1,6 @@
 var http=require('http');
+var express=require('express');
+var app=express();
 http.get('http://php.com', (res) => {
   const { statusCode } = res;
   const contentType = res.headers['content-type'];
@@ -33,3 +35,9 @@ http.get('http://php.com', (res) => {
 }).on('error', (e) => {
   console.error(`Got error: ${e.message}`);
 });
+app.get('/',function(req,res){
+  res.send('hello word!')
+})
+app.listen('3000',function(){
+  console.log('server running ....')
+})
